@@ -22,7 +22,8 @@ public class App extends SimpleWebServer {
      * Start the server at port 8080.
      */
     public App() throws IOException {
-        super(null, 8080, new File("../front-end/build"), true);
+       super(null, 8080, new File("front-end/build"), true);
+
 
         this.game = new Game();
 
