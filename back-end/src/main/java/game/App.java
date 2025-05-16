@@ -8,6 +8,8 @@ import fi.iki.elonen.SimpleWebServer;
 
 public class App extends SimpleWebServer {
 
+    private Game game;
+
     public static void main(String[] args) {
         try {
             new App();
@@ -16,18 +18,8 @@ public class App extends SimpleWebServer {
         }
     }
 
-    private Game game;
-    @SpringBootApplication
-public class App {
-    public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
-    }
-}
-
     /**
-     * Start the server at :8080 port.
-     * 
-     * @throws IOException
+     * Start the server at port 8080.
      */
     public App() throws IOException {
         super(null, 8080, new File("../front-end/build"), true);
@@ -41,16 +33,18 @@ public class App {
     @Override
     public Response serve(IHTTPSession session) {
         String uri = session.getUri();
-        if (uri.startsWith("/api")) {
 
+        if (uri.startsWith("/api")) {
             Map<String, String> params = session.getParms();
+
             if (uri.equals("/api/newgame")) {
                 this.game = new Game();
             } else if (uri.equals("/api/play")) {
-                // e.g., /play?x=1&y=1
-                this.game = this.game.play(Integer.parseInt(params.get("x")), Integer.parseInt(params.get("y")));
+                int x = Integer.parseInt(params.get("x"));
+                int y = Integer.parseInt(params.get("y"));
+                this.game = this.game.play(x, y);
             }
-            // Extract the view-specific data from the game and apply it to the template.
+
             GameState gameplay = GameState.forGame(this.game);
             return newFixedLengthResponse(gameplay.toString());
         } else {
