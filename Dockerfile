@@ -1,12 +1,19 @@
-FROM eclipse-temurin:21
+# 1-р үе шат: Build хийх
+FROM node:18 AS builder
 
-RUN mkdir /opt/app
-COPY back-end/target/back-end-1.0-SNAPSHOT-jar-with-dependencies.jar /opt/app
+WORKDIR /app
+COPY front-end/ ./front-end/
+WORKDIR /app/front-end
+RUN npm install && npm run build
 
-RUN mkdir -p /opt/front-end/build
-COPY front-end/build /opt/front-end/build
+# 2-р үе шат: Serve хийх
+FROM node:18
 
-WORKDIR /opt/app
+WORKDIR /app
+COPY --from=builder /app/front-end/build ./build
 
-EXPOSE 8080 
-CMD ["java", "-jar", "/opt/app/back-end-1.0-SNAPSHOT-jar-with-dependencies.jar"]
+# static сервер ашиглах
+RUN npm install -g serve
+
+EXPOSE 8080
+CMD ["serve", "-s", "build", "-l", "8080"]
