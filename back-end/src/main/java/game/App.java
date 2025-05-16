@@ -17,6 +17,12 @@ public class App extends SimpleWebServer {
     }
 
     private Game game;
+    @SpringBootApplication
+public class App {
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+}
 
     /**
      * Start the server at :8080 port.
